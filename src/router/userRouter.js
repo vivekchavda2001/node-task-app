@@ -12,8 +12,8 @@ const upload = multer({
         fileSize:1000000
     },
     fileFilter(req,file,cb){
-        if(!file.originalname.match(/\.(jpg|jpeg|png)$/)){
-            return cb(new Error('Please Upload a Image Files.'))
+        if(!file.originalname.match(/\.(jpg|jpeg)$/)){
+            return cb(new Error(req.t('invalid_upload')))
         }
         cb(undefined,true)
     }
@@ -25,7 +25,7 @@ router.post('/user',async(req,res)=>{
         await newUser.save()
         sendWelcomeMail(newUser.email,newUser.name)
         const token = await newUser.generateAuthToken();
-        res.status(200).send({newUser,token});
+        res.status(201).send({newUser,token,message: req.t('user_create_success')});
     }catch(e){
         res.status(400).send(e)
     }
@@ -97,7 +97,6 @@ router.post('/user/login', async (req, res) => {
         res.status(201).send({userOne,token})
     } catch (e) {
         res.status(400).send()
-        console.log("Error",e);
     }
 })
 
@@ -108,7 +107,7 @@ router.post('/user/logout',auth,async (req,res)=>{
         })
         await req.user.save()
         console.log(req.token);
-        res.status(200).send('Logged Out!!')
+        res.status(200).send(req.t('logged_out'))
     }catch(e){
         res.status(500).send()
     }
@@ -133,12 +132,11 @@ router.patch('/user/me',auth, async (req, res) => {
     const allowedUpdates = ['name', 'email', 'password', 'age']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
     if (!isValidOperation) {
-        return res.status(500).send({ error: 'Invalid updates!' })
+        return res.status(500).send({ error: req.t('invalid_updates') })
     }
     try {
         updates.forEach((update) => req.user[update] = req.body[update])
         await req.user.save()
-        console.log(req.body,"called");
         res.status(200).send(req.user)
     } catch (e) {
         res.status(400).send(e)
@@ -149,9 +147,9 @@ router.delete('/user/me',auth,async(req,res)=>{
     try{
         await req.user.remove() 
         sendCancelMail(req.user.email,req.user.name)
-        res.status(200).send("Your Profile Is Deleted")
+        res.status(201).send({message:req.t('profile_deleted')})
     }catch(e){
-        res.status(500).send("Your Profile is no longer Exist.")
+        res.status(500).send({message:req.t('profile_not_exist')})
     }
 })
 
