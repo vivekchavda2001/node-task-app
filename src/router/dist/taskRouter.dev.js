@@ -12,7 +12,8 @@ var router = express.Router();
 
 var Task = require('../model/tasks');
 
-var auth = require('../middleware/auth');
+var auth = require('../middleware/auth'); //route for addind task along with user id
+
 
 router.post('/task', auth, function _callee(req, res) {
   var newTask;
@@ -43,7 +44,8 @@ router.post('/task', auth, function _callee(req, res) {
       }
     }
   }, null, null, [[1, 7]]);
-});
+}); //route for getting task for logged in user
+
 router.get('/task', auth, function _callee2(req, res) {
   var match, sort, parts;
   return regeneratorRuntime.async(function _callee2$(_context2) {
@@ -90,7 +92,8 @@ router.get('/task', auth, function _callee2(req, res) {
       }
     }
   }, null, null, [[4, 10]]);
-});
+}); //getting specific task
+
 router.get('/task/:id', auth, function _callee3(req, res) {
   var task;
   return regeneratorRuntime.async(function _callee3$(_context3) {
@@ -130,7 +133,8 @@ router.get('/task/:id', auth, function _callee3(req, res) {
       }
     }
   }, null, null, [[0, 9]]);
-});
+}); //updating task
+
 router.patch('/task/:id', auth, function _callee4(req, res) {
   var updates, allowedUpdates, isValidOperation, taskOne;
   return regeneratorRuntime.async(function _callee4$(_context4) {
@@ -193,7 +197,8 @@ router.patch('/task/:id', auth, function _callee4(req, res) {
       }
     }
   }, null, null, [[5, 17]]);
-});
+}); //deleting task
+
 router["delete"]('/task/:id', auth, function _callee5(req, res) {
   var taskOne;
   return regeneratorRuntime.async(function _callee5$(_context5) {

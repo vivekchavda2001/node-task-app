@@ -6,7 +6,7 @@ const sharp = require('sharp')
 const multer = require('multer')
 const {sendWelcomeMail,sendCancelMail} = require('../email/account')
 
-
+//using multer for uploading files
 const upload = multer({
     limits:{
         fileSize:1000000
@@ -18,7 +18,7 @@ const upload = multer({
         cb(undefined,true)
     }
 })
-
+//creating new user
 router.post('/user',async(req,res)=>{
     const newUser = new user(req.body)
     try{
@@ -31,6 +31,7 @@ router.post('/user',async(req,res)=>{
     }
     
 })
+//creating new avatar, for user
 router.post("/user/me/avatar",auth,upload.single('avatar'),async (req,res)=>{
     const buffer = await sharp(req.file.buffer).resize({width:250,height:250}).png().toBuffer()
     req.user.avatar = buffer
@@ -40,7 +41,7 @@ router.post("/user/me/avatar",auth,upload.single('avatar'),async (req,res)=>{
     res.status(400).send({error:error.message})
 })
 
-
+//deleting avatar for user
 router.delete("/user/me/avatar",auth,upload.single('avatar'),async (req,res)=>{
     req.user.avatar = undefined
     await req.user.save()
@@ -49,24 +50,24 @@ router.delete("/user/me/avatar",auth,upload.single('avatar'),async (req,res)=>{
     res.status(400).send({error:error.message})
 })
 
-
+//getting details of logged in user
 router.get('/user/me',auth,async(req,res)=>{
    res.send(req.user)   
 })
+//
 router.get('/user',auth,async(req,res)=>{
 
     try{
         const users = await user.find({})
-        console.log(users);
          res.status(200).send(users)
     }catch(e){
         res.status(500).send()
     }
 })
+//fetching profile pic of user
 router.get('/user/pic/:id',async (req,res)=>{
     try{       
         const userOne = await user.findById(req.params.id)
-        console.log(userOne,"called");
         if(!userOne || !userOne.avatar){
             throw new Error("")
         }
@@ -76,30 +77,17 @@ router.get('/user/pic/:id',async (req,res)=>{
         res.status(500).send(e)
     }
 })
- 
-router.get('/user/:id',async(req,res)=>{
-    try{
-         const userOne = await user.find({_id:req.params.id});
-         if(!userOne){
-            return res.status(500).send()
-        }
-        res.status(201).send(userOne)
-    }catch(e){
-        res.status(404).send()
-    }
-})
-
-
+//login route for user
 router.post('/user/login', async (req, res) => {
     try {
         const userOne = await user.findByCredentials(req.body.email, req.body.password)
         const token = await userOne.generateAuthToken()
-        res.status(201).send({userOne,token})
+        res.status(200).send({userOne,token})
     } catch (e) {
-        res.status(400).send()
+        res.status(400).send({msg:"Invalid Credentials"})
     }
 })
-
+//logout user
 router.post('/user/logout',auth,async (req,res)=>{
     try{
         req.user.tokens = req.user.tokens.filter((token)=>{
@@ -112,7 +100,7 @@ router.post('/user/logout',auth,async (req,res)=>{
         res.status(500).send()
     }
 })
-
+//logout from all the devices 
 router.post('/user/logoutall',auth,async (req,res)=>{
     try{
         req.user.tokens = req.user.tokens.filter((token)=>{
@@ -126,7 +114,7 @@ router.post('/user/logoutall',auth,async (req,res)=>{
     }
 })
 
-
+//updating user details
 router.patch('/user/me',auth, async (req, res) => {
     const updates = Object.keys(req.body)    
     const allowedUpdates = ['name', 'email', 'password', 'age']
@@ -143,6 +131,7 @@ router.patch('/user/me',auth, async (req, res) => {
     }
 })
 
+//deleting profile of user
 router.delete('/user/me',auth,async(req,res)=>{
     try{
         await req.user.remove() 
@@ -152,5 +141,4 @@ router.delete('/user/me',auth,async(req,res)=>{
         res.status(500).send({message:req.t('profile_not_exist')})
     }
 })
-
 module.exports = router;

@@ -1,4 +1,2 @@
-const  app = require('./app')
-const port = process.env.PORT
-
-app.listen(port,()=>console.log('sever is Running',port))
+const app = require('./app')
+app.listen(8081, () => console.log('sever is Running'))

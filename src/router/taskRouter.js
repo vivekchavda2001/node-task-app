@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Task = require('../model/tasks')
 const auth = require('../middleware/auth')
-
+//route for addind task along with user id
 router.post('/task',auth,async(req,res)=>{
     const newTask = new Task({
         ...req.body,
@@ -15,6 +15,8 @@ router.post('/task',auth,async(req,res)=>{
         res.status(400).send(e)
     }
 })
+
+//route for getting task for logged in user
 router.get('/task',auth,async (req,res)=>{
     const match = {}
     const sort = {}
@@ -43,6 +45,7 @@ router.get('/task',auth,async (req,res)=>{
     }
    
 })
+//getting specific task
 router.get('/task/:id',auth,async (req,res)=>{
     try{
         const task = await Task.find({_id:req.params.id,owner:req.user._id})
@@ -54,6 +57,7 @@ router.get('/task/:id',auth,async (req,res)=>{
         res.status(404).send()
     }
 })
+//updating task
 router.patch('/task/:id',auth,async(req,res)=>{
     const updates = Object.keys(req.body)
     const allowedUpdates = ['description', 'completed']
@@ -74,6 +78,7 @@ router.patch('/task/:id',auth,async(req,res)=>{
         res.status(500).send()
     }
 })
+//deleting task
 router.delete('/task/:id',auth,async(req,res)=>{
     try{
         const taskOne = await Task.findOneAndDelete({_id:req.params.id,owner:req.user.id})

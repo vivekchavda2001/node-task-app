@@ -14,7 +14,8 @@ var i18next = require('i18next');
 
 var backend = require('i18next-fs-backend');
 
-var middleware = require('i18next-http-middleware');
+var middleware = require('i18next-http-middleware'); //middlewares declaration for i18
+
 
 i18next.use(backend).use(middleware.LanguageDetector).init({
   fallbackLng: 'en',
