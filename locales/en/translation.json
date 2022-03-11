@@ -1,0 +1,9 @@
+{
+    "user_create_success":"User Created.",
+    "logged_out":"logged out.",
+    "logged_all":"logged From All The Devices.",
+    "invalid_updates":"Invalid Updates Found",
+    "profile_deleted":"Your Profile is Deleted",
+    "profile_not_exist":"Your Profile is no longer Exist.",
+    "invalid_upload":"Please Uplod a valid File."
+}

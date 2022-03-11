@@ -3,6 +3,7 @@ const validator = require('validator')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const task = require('./tasks')
+    //schema for user model
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -12,7 +13,7 @@ const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique:true,
+        unique: true,
         trim: true,
         lowercase: true,
         validate(value) {
@@ -47,85 +48,77 @@ const userSchema = new mongoose.Schema({
             required: true
         }
     }],
-    avatar:{
-        type:Buffer
+    avatar: {
+        type: Buffer
     }
 
-},{
-    timestamps:true
+}, {
+    timestamps: true
 })
-
-userSchema.virtual('tasks',{
-    ref:'Task',
-    localField:'_id',
-    foreignField:'owner'
+userSchema.virtual('tasks', {
+    ref: 'Task',
+    localField: '_id',
+    foreignField: 'owner'
 })
-
 
 //login Middlewares
-userSchema.statics.findByCredentials = async (email, password) => {
-    const user = await User.findOne({ email })
-
+userSchema.statics.findByCredentials = async(email, password) => {
+    const user = await User.findOne({
+        email
+    })
     if (!user) {
         throw new Error('Unable to login')
     }
-
     const isMatch = await bcrypt.compare(password, user.password)
-
     if (!isMatch) {
         throw new Error('Unable to login Pass Incorrect')
     }
-
     return user
 }
 
 //jwt token
-userSchema.methods.generateAuthToken = async function () {
-    
-    const user = this
-    const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET)
-
-    user.tokens = user.tokens.concat({ token })
-    await user.save()
-
-    console.log(token)
-
-    return token
-}
-//delete Private data
-userSchema.methods.toJSON = function () {
-    const user = this
-    const userObject = user.toObject()
-
-    delete userObject.password
-    delete userObject.tokens
-    delete userObject.avatar
-
-    return userObject
-}
-
-
-//Middleware for Encrypting Password
-userSchema.pre('save', async function (next) {
-    const user = this
-
-    if (user.isModified('password')) {
-        user.password = await bcrypt.hash(user.password, 8)
+userSchema.methods.generateAuthToken = async function() {
+        const user = this
+        const token = jwt.sign({
+            _id: user._id.toString()
+        }, process.env.JWT_SECRET)
+        user.tokens = user.tokens.concat({
+            token
+        })
+        await user.save()
+        console.log(token)
+        return token
     }
+    //delete Private data
+userSchema.methods.toJSON = function() {
+        const user = this
+        const userObject = user.toObject()
 
-    next()
-})
-//delete task when user is deleted
+        delete userObject.password
+        delete userObject.tokens
+        delete userObject.avatar
 
-userSchema.pre('remove',async function(next){
+        return userObject
+    }
+    //Middleware for Encrypting Password
+userSchema.pre('save', async function(next) {
+        const user = this
+        if (user.isModified('password')) {
+            user.password = await bcrypt.hash(user.password, 8)
+        }
+
+        next()
+    })
+    //delete task when user is deleted
+userSchema.pre('remove', async function(next) {
     const user = this
 
-    await task.deleteMany({owner:user._id})
+    await task.deleteMany({
+        owner: user._id
+    })
     next()
 
 
 })
-
 const User = mongoose.model('User', userSchema)
-
 module.exports = User

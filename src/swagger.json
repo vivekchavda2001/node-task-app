@@ -1,0 +1,170 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "",
+        "version": "1.0.0",
+        "title": "Tasks API",
+        "contact": {
+            "email": "abc@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "schemes": ["http"],
+    "host": "localhost:3000",
+    "basePath": "",
+    "paths" : {
+        "/user" : {
+            "post" : {
+                "summary" : "Add new user.",
+                "description": "",
+                "produces": ["application/json"],
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "description": "Full Name of new user",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "email",
+                        "in": "path",
+                        "description": "Unique Email of New User",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "password",
+                        "in": "path",
+                        "description": "Password for New Account(Lenght Should be greater The 6 character and Password should not contain phrase `Password`)",
+                        "required": true,
+                        "type": "string"
+                    }
+
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/new_user"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Credentials",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/login" : {
+            "post" : {
+                "summary" : "Login user.",
+                "description": "",
+                "produces": ["application/json"],
+                "parameters": [{
+                    "name": "email",
+                    "in": "path",
+                    "description": "Unique Email of New User",
+                    "required": true,
+                    "type": "string"
+                },
+                {
+                    "name": "password",
+                    "in": "path",
+                    "description": "Password for Account.",
+                    "required": true,
+                    "type": "string"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/user_login"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Credentials",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/user/me" : {
+            "get" : {
+                "summary" : "Get User Details.",
+                "description": "",
+                "produces": ["application/json"],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/new_user"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid status value",
+                        "schema": {
+                            "$ref": "#/definitions/InvalidResponse"
+                        }
+                    }
+                }
+            }
+        }
+    }, 
+    "definitions": {
+        "new_user": {
+            "type": "object",
+            "properties": {
+                "id": {
+                     "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Email": {
+                    "type": "string"
+                },
+                "CreatedAt At": {
+                    "type": "date"
+                },
+                "Updated At": {
+                    "type": "date"
+                }
+            }
+        },
+        "user_login":{
+            "type":"object",
+            "properties":{
+                "message":{
+                    "type":"string"
+                }
+            }
+        },       
+        "InvalidResponse": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                }
+            }
+
+        }
+    }
+}
