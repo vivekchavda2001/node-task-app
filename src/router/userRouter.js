@@ -3,7 +3,7 @@ const router = express.Router()
 const user = require('../model/users')
 const auth = require('../middleware/auth')
 const sharp = require('sharp')
-const multer = require('multer')
+const multer = require('mu      lter')
 const { sendWelcomeMail, sendCancelMail } = require('../email/account')
 
 //using multer for uploading files

@@ -28,7 +28,6 @@ router.get('/task', auth, async(req, res) => {
         sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
     }
     try {
-
         await req.user.populate({
             path: 'tasks',
             match,

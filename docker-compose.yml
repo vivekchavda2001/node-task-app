@@ -1,0 +1,20 @@
+version: '3.9'
+services:
+  mongo_db:
+    container_name: db_container
+    image: mongo:latest
+    restart: always
+    volumes:
+      - mongo_db:/data/db    
+  api:
+    build: .
+    ports:
+      - 4000:8081
+    environment:
+      SENDGRID_API_KEY: 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
+      MONGOOSE_CONNECTION: mongodb+srv://chavdavivek:Vivek@123@cluster0.sbq38.mongodb.net/test_task_db?retryWrites=true&w=majority
+      JWT_SECRET: thisismynewcourse
+    depends_on:
+      - mongo_db
+volumes:
+  mongo_db: {}
