@@ -86,7 +86,6 @@ userSchema.methods.generateAuthToken = async function() {
             token
         })
         await user.save()
-        console.log(token)
         return token
     }
     //delete Private data
